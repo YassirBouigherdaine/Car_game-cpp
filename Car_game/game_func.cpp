@@ -2,19 +2,23 @@
 
 
 
-const int screen_height = 30;
+const int screen_height = 35;
 const int screen_width = 40;
 
 COORD cursor_pos;
 
-int enemY_pos = 4;
+int FenemY_pos = 5;
+int SenemY_pos = 1;
 int playerY_pos = screen_height - 8;
 int playerX_pos = (screen_width / 2) - 2;
 
 int score = 0;
 bool game_over = false;
 
+// to generate enemy position
+
 int p = ((rand() % 5) + 1);
+int s = ((rand() % 4) + 5);
 
 int i, j;
 
@@ -29,6 +33,7 @@ char enemyCar[4][4] = { '\xDB','*','*','\xDB',
 						'\xDB','*','*','\xDB',
 						' ','\x5C','\x2F',' ' };
 
+// functions
 
 void gotoxy(int x, int y)
 {
@@ -94,11 +99,10 @@ void draw_bord()
 	std::cout << "[E] to move left";
 	gotoxy(screen_width + 10, 16);
 	std::cout << "[R] to move right";
-
 }
 
 
-void draw_enemy()
+void draw_Fenemy()
 {
 	// draw enemy car
 
@@ -106,14 +110,15 @@ void draw_enemy()
 	{
 		for (j = 0; j < 4; j++)
 		{
-			gotoxy(j + (screen_width / p) - 5, i + enemY_pos);
+			gotoxy(j + (screen_width / p) - 5, i + FenemY_pos);
 			std::cout << enemyCar[i][j];
 
 			// collision with player car
 
-			if (playerX_pos + 4 == j + (screen_width / p) - 5 || (playerX_pos == j + (screen_width / p) - 5))
+			
+			if ((i + FenemY_pos) == playerY_pos)
 			{
-				if ((i + enemY_pos) == playerY_pos)
+				if (playerX_pos + 4 == j + (screen_width / p) - 5 || (playerX_pos == j + (screen_width / p) - 5))
 				{
 					game_over = true;
 				}
@@ -121,7 +126,7 @@ void draw_enemy()
 		}
 	}
 
-	Sleep(70);
+	Sleep(50);
 
 	// erase enemy car
 
@@ -129,13 +134,48 @@ void draw_enemy()
 	{
 		for (j = 0; j < 4; j++)
 		{
-			gotoxy(j + (screen_width / p) - 5, i + enemY_pos);
+			gotoxy(j + (screen_width / p) - 5, i + FenemY_pos);
 			std::cout << " ";
 		}
 	}
-
 }
 
+void draw_Senemy()
+{
+	// draw enemy car
+
+	for (i = 0; i < 4; i++)
+	{
+		for (j = 0; j < 4; j++)
+		{
+			gotoxy(j + (screen_width / 2) + s, i + SenemY_pos);
+			std::cout << enemyCar[i][j];
+
+			// collision with player car
+
+			if ((i + SenemY_pos) == playerY_pos)
+			{
+				if (playerX_pos + 4 == j + (screen_width / 2) + s || (playerX_pos == j + (screen_width / 2) + s))
+				{
+					game_over = true;
+				}
+			}
+		}
+	}
+
+	Sleep(50);
+
+	// erase enemy car
+
+	for (i = 0; i < 4; i++)
+	{
+		for (j = 0; j < 4; j++)
+		{
+			gotoxy(j + (screen_width / 2) + s, i + SenemY_pos);
+			std::cout << " ";
+		}
+	}
+}
 
 
 void draw_playerCar()
@@ -170,7 +210,6 @@ void draw_playerCar()
 	{
 		game_over = true;
 	}
-
 }
 
 
@@ -194,11 +233,21 @@ void input()
 
 void reset_enemyPos()
 {
-	if (i + enemY_pos > screen_height - 4)
+	if (i + FenemY_pos > screen_height - 4)
 	{
 		p = ((rand() % 4) + 1);
 
-		enemY_pos = 3;
+		FenemY_pos = 3;
+
+		// update score
+		score++;
+	}
+
+	else if (i + SenemY_pos > screen_height - 4)
+	{
+		s = ((rand() % 4) + 5);
+
+		SenemY_pos = 1;
 
 		// update score
 		score++;
@@ -228,13 +277,16 @@ void run_game()
 
 		draw_playerCar();
 
-		draw_enemy();
+		draw_Fenemy();
 
+		draw_Senemy();
+		
 		input();
 
 		reset_enemyPos();
 
-		enemY_pos += 2;
+		FenemY_pos ++;
+		SenemY_pos ++;
 	}
 
 	gameOver();

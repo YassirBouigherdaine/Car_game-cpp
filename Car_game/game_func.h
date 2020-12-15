@@ -13,7 +13,9 @@ void gotoxy(int, int);
 
 void draw_bord();
 
-void draw_enemy();
+void draw_Fenemy();           // drawing first enemy
+
+void draw_Senemy();           // drawing second enemy
 
 void draw_playerCar();
 
